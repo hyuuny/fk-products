@@ -52,6 +52,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PUT,
                                         "/api/v1/products/**"
                                 ).hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE,
+                                        "/api/v1/products/**"
+                                ).hasAuthority("ADMIN")
                                 .requestMatchers(webSecurityIgnoring).permitAll()
                                 .anyRequest().authenticated()
                 )

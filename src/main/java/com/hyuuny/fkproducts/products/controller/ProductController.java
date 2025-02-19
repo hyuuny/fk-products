@@ -39,4 +39,11 @@ public class ProductController {
         return ApiResponse.success(new ProductResponseDto.ResponseDto(updatedProduct));
     }
 
+    @DeleteMapping("/{id}")
+    public ApiResponse<?> deleteProduct(
+            @PathVariable Long id
+    ) {
+        productService.deleteProduct(id);
+        return ApiResponse.success();
+    }
 }
