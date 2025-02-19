@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorType {
 
     INVALID_PRODUCT_PRICE(HttpStatus.BAD_REQUEST, ErrorCode.E400, "invalid productPrice", LogLevel.ERROR),
+    PRODUCT_NOTFOUND(HttpStatus.BAD_REQUEST, ErrorCode.E400, "product notFound", LogLevel.ERROR),
     DEFAULT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.E500, "An unexpected error has occurred.", LogLevel.ERROR);
 
     private final HttpStatus status;
