@@ -5,10 +5,7 @@ import com.hyuuny.fkproducts.products.service.ProductService;
 import com.hyuuny.fkproducts.support.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
@@ -23,6 +20,14 @@ public class ProductController {
     ) {
         ProductDto.Response savedProduct = productService.createProduct(request.toCreate());
         return ApiResponse.success(new ProductResponseDto.ResponseDto(savedProduct));
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<ProductResponseDto.ResponseDto> getProduct(
+            @PathVariable Long id
+    ) {
+        ProductDto.Response product = productService.getProduct(id);
+        return ApiResponse.success(new ProductResponseDto.ResponseDto(product));
     }
 
 }

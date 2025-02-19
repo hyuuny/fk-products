@@ -47,8 +47,8 @@ public class SecurityConfig {
                                         "/api/v1/products/**"
                                 ).hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.GET,
-                                        "/api/v1/users/**"
-                                ).permitAll()
+                                        "/api/v1/products/**"
+                                ).hasAuthority("CUSTOMER")
                                 .requestMatchers(webSecurityIgnoring).permitAll()
                                 .anyRequest().authenticated()
                 )
