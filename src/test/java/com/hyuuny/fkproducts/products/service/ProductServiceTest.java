@@ -117,6 +117,31 @@ class ProductServiceTest {
         assertThat(exception.getMessage()).isEqualTo("invalid productPrice");
     }
 
+    @DisplayName("상품을 삭제 할 수 있다")
+    @Test
+    void deleteProduct() {
+        ProductEntity product = generateProduct();
+        when(productReader.read(product.getId())).thenReturn(product);
+        doNothing().when(productWriter).delete(any());
+
+        productService.deleteProduct(product.getId());
+
+        verify(productReader).read(product.getId());
+        verify(productWriter).delete(product);
+    }
+
+    @DisplayName("존재하지 않는 상품을 삭제 할 수 없다")
+    @Test
+    void deleteProductAndNotFoundException() {
+        long invalidId = 999999999L;
+        doThrow(new FkProductsException(ErrorType.PRODUCT_NOTFOUND, "상품을 찾을 수 없습니다 id:" + invalidId))
+                .when(productReader).read(any());
+
+        FkProductsException exception = assertThrows(FkProductsException.class, () -> productService.deleteProduct(invalidId));
+
+        assertThat(exception.getMessage()).isEqualTo("product notFound");
+    }
+
     private ProductEntity generateProduct() {
         return ProductEntity.builder()
                 .name("바나나")
