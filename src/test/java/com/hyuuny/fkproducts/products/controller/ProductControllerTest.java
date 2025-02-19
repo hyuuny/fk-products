@@ -140,6 +140,34 @@ class ProductControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("error.data").value("상품 가격은 0보다 커야 합니다."));
     }
 
+    @DisplayName("상품을 삭제 할 수 있다")
+    @Test
+    void deleteProduct() throws Exception {
+        ProductEntity product = generateProduct();
+
+        mockMvc.perform(delete("/api/v1/products/{id}", product.getId())
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("result").value(ResultType.SUCCESS.name()));
+    }
+
+    @DisplayName("존재하지 않는 상품을 삭제 할 수 없다")
+    @Test
+    void deleteProductAndNotFoundException() throws Exception {
+        long invalidId = 999999999L;
+
+        mockMvc.perform(delete("/api/v1/products/{id}", invalidId)
+                        .header(HttpHeaders.AUTHORIZATION, this.getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.message").value(ErrorType.PRODUCT_NOTFOUND.getMessage()))
+                .andExpect(jsonPath("error.data").value("상품을 찾을 수 없습니다 id:" + invalidId));
+    }
+
     private ProductEntity generateProduct() {
         return productRepository.save(
                 ProductEntity.builder()
