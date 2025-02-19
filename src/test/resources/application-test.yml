@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 100
+
+jwt:
+  secret-key: a290bGluU3ByaW5nQm9vdFNlY3VyaXR5QmF0Y2hSZWRpc0h5dXVueUVjb21tZXJjZQ==
+  access-expiration-time: 600
