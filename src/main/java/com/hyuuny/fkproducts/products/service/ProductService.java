@@ -32,7 +32,7 @@ public class ProductService {
 
     @Transactional
     public ProductDto.Response updateProduct(Long id, ProductDto.Update dto) {
-        validator.validate(dto.getPrice());
+        validator.validate(dto.price());
         ProductEntity product = productReader.read(id);
         dto.update(product);
         return new ProductDto.Response(product);

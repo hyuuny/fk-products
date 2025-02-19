@@ -1,29 +1,17 @@
 package com.hyuuny.fkproducts.products.service;
 
 import com.hyuuny.fkproducts.products.domain.ProductEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 public class ProductDto {
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Create {
-
-        private String name;
-
-        private Long price;
-
-        private Long shippingFee;
-
-        private String description;
-
+    public record Create(
+            String name,
+            Long price,
+            Long shippingFee,
+            String description
+    ) {
         public ProductEntity toEntity(LocalDateTime createdAt) {
             return ProductEntity.builder()
                     .name(this.name)
@@ -35,47 +23,32 @@ public class ProductDto {
         }
     }
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Response {
-
-        private Long id;
-
-        private String name;
-
-        private Long price;
-
-        private Long shippingFee;
-
-        private String description;
-
-        private LocalDateTime createdAt;
-
+    public record Response(
+            Long id,
+            String name,
+            Long price,
+            Long shippingFee,
+            String description,
+            LocalDateTime createdAt
+    ) {
         public Response(ProductEntity entity) {
-            this.id = entity.getId();
-            this.name = entity.getName();
-            this.price = entity.getPrice();
-            this.shippingFee = entity.getShippingFee();
-            this.description = entity.getDescription();
-            this.createdAt = entity.getCreatedAt();
+            this(
+                    entity.getId(),
+                    entity.getName(),
+                    entity.getPrice(),
+                    entity.getShippingFee(),
+                    entity.getDescription(),
+                    entity.getCreatedAt()
+            );
         }
     }
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Update {
-
-        private String name;
-
-        private Long price;
-
-        private Long shippingFee;
-
-        private String description;
-
+    public record Update(
+            String name,
+            Long price,
+            Long shippingFee,
+            String description
+    ) {
         public void update(ProductEntity entity) {
             entity.changeName(this.name);
             entity.changePrice(this.price);

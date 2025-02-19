@@ -39,12 +39,12 @@ class ProductServiceTest {
 
         ProductDto.Response savedProduct = productService.createProduct(dto);
 
-        assertThat(savedProduct.getId()).isEqualTo(product.getId());
-        assertThat(savedProduct.getName()).isEqualTo(product.getName());
-        assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice());
-        assertThat(savedProduct.getShippingFee()).isEqualTo(product.getShippingFee());
-        assertThat(savedProduct.getDescription()).isEqualTo(product.getDescription());
-        assertThat(savedProduct.getCreatedAt()).isEqualTo(product.getCreatedAt());
+        assertThat(savedProduct.id()).isEqualTo(product.getId());
+        assertThat(savedProduct.name()).isEqualTo(product.getName());
+        assertThat(savedProduct.price()).isEqualTo(product.getPrice());
+        assertThat(savedProduct.shippingFee()).isEqualTo(product.getShippingFee());
+        assertThat(savedProduct.description()).isEqualTo(product.getDescription());
+        assertThat(savedProduct.createdAt()).isEqualTo(product.getCreatedAt());
     }
 
     @DisplayName("상품 가격이 0원 이하이면 상품을 등록할 수 없다")
@@ -67,12 +67,12 @@ class ProductServiceTest {
 
         ProductDto.Response response = productService.getProduct(product.getId());
 
-        assertThat(response.getId()).isEqualTo(product.getId());
-        assertThat(response.getName()).isEqualTo(product.getName());
-        assertThat(response.getPrice()).isEqualTo(product.getPrice());
-        assertThat(response.getShippingFee()).isEqualTo(product.getShippingFee());
-        assertThat(response.getDescription()).isEqualTo(product.getDescription());
-        assertThat(response.getCreatedAt()).isEqualTo(product.getCreatedAt());
+        assertThat(response.id()).isEqualTo(product.getId());
+        assertThat(response.name()).isEqualTo(product.getName());
+        assertThat(response.price()).isEqualTo(product.getPrice());
+        assertThat(response.shippingFee()).isEqualTo(product.getShippingFee());
+        assertThat(response.description()).isEqualTo(product.getDescription());
+        assertThat(response.createdAt()).isEqualTo(product.getCreatedAt());
     }
 
     @DisplayName("존재하지 않는 상품은 조회할 수 없다")
@@ -97,11 +97,11 @@ class ProductServiceTest {
 
         ProductDto.Response response = productService.updateProduct(product.getId(), dto);
 
-        assertThat(response.getId()).isEqualTo(product.getId());
-        assertThat(response.getName()).isEqualTo(dto.getName());
-        assertThat(response.getPrice()).isEqualTo(dto.getPrice());
-        assertThat(response.getShippingFee()).isEqualTo(dto.getShippingFee());
-        assertThat(response.getDescription()).isEqualTo(dto.getDescription());
+        assertThat(response.id()).isEqualTo(product.getId());
+        assertThat(response.name()).isEqualTo(dto.name());
+        assertThat(response.price()).isEqualTo(dto.price());
+        assertThat(response.shippingFee()).isEqualTo(dto.shippingFee());
+        assertThat(response.description()).isEqualTo(dto.description());
     }
 
     @DisplayName("상품 가격이 0원 이하이면 상품을 수정할 수 없다")

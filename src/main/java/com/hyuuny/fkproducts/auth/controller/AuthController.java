@@ -21,7 +21,7 @@ public class AuthController {
     public ApiResponse<AuthResponseDto.UserWithTokenResponse> auth(
             @RequestBody @Valid AuthRequestDto.LoginRequest request
     ) {
-        UserTokenDto.UserWithToken userWithToken = authService.auth(request.getEmail(), request.getPassword());
+        UserTokenDto.UserWithToken userWithToken = authService.auth(request.email(), request.password());
         return ApiResponse.success(new AuthResponseDto.UserWithTokenResponse(userWithToken));
     }
 

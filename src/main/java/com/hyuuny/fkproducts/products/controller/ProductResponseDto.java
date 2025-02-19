@@ -1,38 +1,28 @@
 package com.hyuuny.fkproducts.products.controller;
 
 import com.hyuuny.fkproducts.products.service.ProductDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 public class ProductResponseDto {
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ResponseDto {
-
-        private Long id;
-
-        private String name;
-
-        private Long price;
-
-        private Long shippingFee;
-
-        private String description;
-
-        private LocalDateTime createdAt;
-
+    public record ResponseDto(
+            Long id,
+            String name,
+            Long price,
+            Long shippingFee,
+            String description,
+            LocalDateTime createdAt
+    ) {
         public ResponseDto(ProductDto.Response response) {
-            this.id = response.getId();
-            this.name = response.getName();
-            this.price = response.getPrice();
-            this.shippingFee = response.getShippingFee();
-            this.description = response.getDescription();
-            this.createdAt = response.getCreatedAt();
+            this(
+                    response.id(),
+                    response.name(),
+                    response.price(),
+                    response.shippingFee(),
+                    response.description(),
+                    response.createdAt()
+            );
         }
     }
 

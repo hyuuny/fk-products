@@ -44,10 +44,10 @@ class ProductControllerTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("result").value(ResultType.SUCCESS.name()))
                 .andExpect(jsonPath("data.id").exists())
-                .andExpect(jsonPath("data.name").value(request.getName()))
-                .andExpect(jsonPath("data.price").value(request.getPrice()))
-                .andExpect(jsonPath("data.shippingFee").value(request.getShippingFee()))
-                .andExpect(jsonPath("data.description").value(request.getDescription()))
+                .andExpect(jsonPath("data.name").value(request.name()))
+                .andExpect(jsonPath("data.price").value(request.price()))
+                .andExpect(jsonPath("data.shippingFee").value(request.shippingFee()))
+                .andExpect(jsonPath("data.description").value(request.description()))
                 .andExpect(jsonPath("data.createdAt").exists());
     }
 
@@ -116,10 +116,10 @@ class ProductControllerTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("result").value(ResultType.SUCCESS.name()))
                 .andExpect(jsonPath("data.id").exists())
-                .andExpect(jsonPath("data.name").value(request.getName()))
-                .andExpect(jsonPath("data.price").value(request.getPrice()))
-                .andExpect(jsonPath("data.shippingFee").value(request.getShippingFee()))
-                .andExpect(jsonPath("data.description").value(request.getDescription()))
+                .andExpect(jsonPath("data.name").value(request.name()))
+                .andExpect(jsonPath("data.price").value(request.price()))
+                .andExpect(jsonPath("data.shippingFee").value(request.shippingFee()))
+                .andExpect(jsonPath("data.description").value(request.description()))
                 .andExpect(jsonPath("data.createdAt").exists());
     }
 

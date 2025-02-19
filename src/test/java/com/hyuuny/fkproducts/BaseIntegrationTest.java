@@ -61,7 +61,7 @@ public abstract class BaseIntegrationTest {
         String responseBody = perform.andReturn().getResponse().getContentAsString();
         ApiResponse<AuthResponseDto.UserWithTokenResponse> response = objectMapper.readValue(responseBody, new TypeReference<>() {
         });
-        return response.getData().getAccessToken();
+        return response.getData().accessToken();
     }
 
     protected void deleteAllUser() {
