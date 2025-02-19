@@ -3,6 +3,7 @@ package com.hyuuny.fkproducts.products.controller;
 import com.hyuuny.fkproducts.BaseIntegrationTest;
 import com.hyuuny.fkproducts.products.domain.ProductEntity;
 import com.hyuuny.fkproducts.products.domain.ProductRepository;
+import com.hyuuny.fkproducts.products.service.ProductDto;
 import com.hyuuny.fkproducts.support.error.ErrorType;
 import com.hyuuny.fkproducts.support.response.ResultType;
 import org.junit.jupiter.api.AfterEach;
@@ -14,8 +15,7 @@ import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -99,6 +99,45 @@ class ProductControllerTest extends BaseIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("error.message").value(ErrorType.PRODUCT_NOTFOUND.getMessage()))
                 .andExpect(jsonPath("error.data").value("상품을 찾을 수 없습니다 id:" + invalidId));
+    }
+
+    @DisplayName("상품을 수정할 수 있다")
+    @Test
+    void updateProduct() throws Exception {
+        ProductEntity product = generateProduct();
+        ProductDto.Update request = new ProductDto.Update("사과", 6000L, 3500L, "맛있는 사과예요");
+
+        mockMvc.perform(put("/api/v1/products/{id}", product.getId())
+                        .header(HttpHeaders.AUTHORIZATION, this.getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("result").value(ResultType.SUCCESS.name()))
+                .andExpect(jsonPath("data.id").exists())
+                .andExpect(jsonPath("data.name").value(request.getName()))
+                .andExpect(jsonPath("data.price").value(request.getPrice()))
+                .andExpect(jsonPath("data.shippingFee").value(request.getShippingFee()))
+                .andExpect(jsonPath("data.description").value(request.getDescription()))
+                .andExpect(jsonPath("data.createdAt").exists());
+    }
+
+    @DisplayName("상품 가격이 0원 이하이면 상품을 수정할 수 없다")
+    @Test
+    void updateProductAndPriceException() throws Exception {
+        ProductEntity product = generateProduct();
+        ProductDto.Update request = new ProductDto.Update("사과", 0L, 3500L, "맛있는 사과예요");
+
+        mockMvc.perform(put("/api/v1/products/{id}", product.getId())
+                        .header(HttpHeaders.AUTHORIZATION, this.getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.message").value(ErrorType.INVALID_PRODUCT_PRICE.getMessage()))
+                .andExpect(jsonPath("error.data").value("상품 가격은 0보다 커야 합니다."));
     }
 
     private ProductEntity generateProduct() {
