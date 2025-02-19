@@ -9,10 +9,10 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Set;
 
-import static com.hyuuny.fkproducts.BaseIntegrationTest.ADMIN_EMAIL;
-import static com.hyuuny.fkproducts.BaseIntegrationTest.ADMIN_PASSWORD;
+import static com.hyuuny.fkproducts.BaseIntegrationTest.*;
 
 @RequiredArgsConstructor
 @Component
@@ -24,12 +24,20 @@ public class TestApplicationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        userRepository.save(
-                UserEntity.builder()
-                        .email(ADMIN_EMAIL)
-                        .password(passwordEncoder.encode(ADMIN_PASSWORD))
-                        .roles(Set.of(Role.ADMIN, Role.CUSTOMER))
-                        .build()
+        userRepository.saveAll(
+                Arrays.asList(
+                        UserEntity.builder()
+                                .email(ADMIN_EMAIL)
+                                .password(passwordEncoder.encode(ADMIN_PASSWORD))
+                                .roles(Set.of(Role.ADMIN, Role.CUSTOMER))
+                                .build(),
+                        UserEntity.builder()
+                                .email(CUSTOMER_EMAIL)
+                                .password(passwordEncoder.encode(CUSTOMER_PASSWORD))
+                                .roles(Set.of(Role.CUSTOMER))
+                                .build()
+                )
+
         );
     }
 }

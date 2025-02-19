@@ -7,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -90,6 +88,11 @@ class ProductServiceTest {
     }
 
     private ProductEntity generateProduct() {
-        return new ProductEntity(1L, "바나나", 5000L, 3000L, "당도 높은 바나나예요", LocalDateTime.now());
+        return ProductEntity.builder()
+                .name("바나나")
+                .price(5000L)
+                .shippingFee(3000L)
+                .description("당도 높은 바나나예요")
+                .build();
     }
 }

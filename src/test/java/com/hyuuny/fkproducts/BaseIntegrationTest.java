@@ -29,6 +29,10 @@ public abstract class BaseIntegrationTest {
 
     public final static String ADMIN_PASSWORD = "!@#adminsecret123";
 
+    public final static String CUSTOMER_EMAIL = "customer@gmail.com";
+
+    public final static String CUSTOMER_PASSWORD = "!@#customersecret123";
+
     @Autowired
     protected MockMvc mockMvc;
 
