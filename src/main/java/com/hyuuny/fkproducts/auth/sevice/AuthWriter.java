@@ -14,7 +14,7 @@ public class AuthWriter {
     public String generateToken(AuthUserDetails userDetails) {
         return jwtTokenProvider.generateToken(
                 userDetails.getUserId(),
-                userDetails.getPassword(),
+                userDetails.getUsername(),
                 userDetails.getRoles()
         );
     }
