@@ -35,4 +35,31 @@ public class ProductRequestDto {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateRequest {
+
+        @NotNull
+        private String name;
+
+        @NotNull
+        private Long price;
+
+        @NotNull
+        private Long shippingFee;
+
+        @NotNull
+        private String description;
+
+        public ProductDto.Update toUpdate() {
+            return ProductDto.Update.builder()
+                    .name(this.name)
+                    .price(this.price)
+                    .shippingFee(this.shippingFee)
+                    .description(this.description)
+                    .build();
+        }
+    }
+
 }

@@ -30,4 +30,13 @@ public class ProductController {
         return ApiResponse.success(new ProductResponseDto.ResponseDto(product));
     }
 
+    @PutMapping("/{id}")
+    public ApiResponse<ProductResponseDto.ResponseDto> updateProduct(
+            @PathVariable Long id,
+            @RequestBody @Valid ProductRequestDto.UpdateRequest request
+    ) {
+        ProductDto.Response updatedProduct = productService.updateProduct(id, request.toUpdate());
+        return ApiResponse.success(new ProductResponseDto.ResponseDto(updatedProduct));
+    }
+
 }
