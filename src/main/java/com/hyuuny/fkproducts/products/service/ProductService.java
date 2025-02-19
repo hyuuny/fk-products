@@ -20,13 +20,21 @@ public class ProductService {
     public ProductDto.Response createProduct(ProductDto.Create dto) {
         LocalDateTime now = LocalDateTime.now();
         ProductEntity product = dto.toEntity(now);
-        validator.validate(product);
+        validator.validate(product.getPrice());
         ProductEntity savedProduct = productWriter.save(product);
         return new ProductDto.Response(savedProduct);
     }
 
     public ProductDto.Response getProduct(Long id) {
         ProductEntity product = productReader.read(id);
+        return new ProductDto.Response(product);
+    }
+
+    @Transactional
+    public ProductDto.Response updateProduct(Long id, ProductDto.Update dto) {
+        validator.validate(dto.getPrice());
+        ProductEntity product = productReader.read(id);
+        dto.update(product);
         return new ProductDto.Response(product);
     }
 }

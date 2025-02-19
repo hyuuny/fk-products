@@ -27,4 +27,20 @@ public class ProductEntity {
 
     private LocalDateTime createdAt;
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changePrice(Long price) {
+        this.price = price;
+    }
+
+    public void changeShippingFee(Long shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
 }

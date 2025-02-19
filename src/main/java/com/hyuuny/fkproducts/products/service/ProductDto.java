@@ -61,4 +61,26 @@ public class ProductDto {
             this.createdAt = entity.getCreatedAt();
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Update {
+
+        private String name;
+
+        private Long price;
+
+        private Long shippingFee;
+
+        private String description;
+
+        public void update(ProductEntity entity) {
+            entity.changeName(this.name);
+            entity.changePrice(this.price);
+            entity.changeShippingFee(this.shippingFee);
+            entity.changeDescription(this.description);
+        }
+    }
 }
