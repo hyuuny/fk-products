@@ -37,4 +37,10 @@ public class ProductService {
         dto.update(product);
         return new ProductDto.Response(product);
     }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        ProductEntity product = productReader.read(id);
+        productWriter.delete(product);
+    }
 }

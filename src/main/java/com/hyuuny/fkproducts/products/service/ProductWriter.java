@@ -15,4 +15,8 @@ public class ProductWriter {
         return productRepository.save(entity);
     }
 
+    public void delete(ProductEntity entity) {
+        productRepository.deleteById(entity.getId());
+    }
+
 }
