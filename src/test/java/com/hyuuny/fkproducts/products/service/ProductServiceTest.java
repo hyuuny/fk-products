@@ -17,6 +17,8 @@ class ProductServiceTest {
 
     private ProductWriter productWriter;
 
+    private ProductReader productReader;
+
     private ProductValidator productValidator;
 
     private ProductService productService;
@@ -24,15 +26,16 @@ class ProductServiceTest {
     @BeforeEach
     void setUp() {
         productWriter = mock(ProductWriter.class);
+        productReader = mock(ProductReader.class);
         productValidator = mock(ProductValidator.class);
-        productService = new ProductService(productWriter, productValidator);
+        productService = new ProductService(productWriter, productReader, productValidator);
     }
 
     @DisplayName("상품을 등록할 수 있다")
     @Test
     void createProduct() {
         ProductDto.Create dto = new ProductDto.Create("바나나", 5000L, 3000L, "당도 높은 바나나예요");
-        ProductEntity product = new ProductEntity(1L, dto.getName(), dto.getPrice(), dto.getShippingFee(), dto.getDescription(), LocalDateTime.now());
+        ProductEntity product = generateProduct();
         doNothing().when(productValidator).validate(any());
         when(productWriter.save(any())).thenReturn(product);
 
@@ -56,5 +59,37 @@ class ProductServiceTest {
         FkProductsException exception = assertThrows(FkProductsException.class, () -> productService.createProduct(dto));
 
         assertThat(exception.getMessage()).isEqualTo("invalid productPrice");
+    }
+
+    @DisplayName("상품을 상세 조회할 수 있다")
+    @Test
+    void getProduct() {
+        ProductEntity product = generateProduct();
+        when(productReader.read(any())).thenReturn(product);
+
+        ProductDto.Response response = productService.getProduct(product.getId());
+
+        assertThat(response.getId()).isEqualTo(product.getId());
+        assertThat(response.getName()).isEqualTo(product.getName());
+        assertThat(response.getPrice()).isEqualTo(product.getPrice());
+        assertThat(response.getShippingFee()).isEqualTo(product.getShippingFee());
+        assertThat(response.getDescription()).isEqualTo(product.getDescription());
+        assertThat(response.getCreatedAt()).isEqualTo(product.getCreatedAt());
+    }
+
+    @DisplayName("존재하지 않는 상품은 조회할 수 없다")
+    @Test
+    void getProductAndNotFoundException() {
+        long invalidId = 999999999L;
+        doThrow(new FkProductsException(ErrorType.PRODUCT_NOTFOUND, "상품을 찾을 수 없습니다 id:" + invalidId))
+                .when(productReader).read(any());
+
+        FkProductsException exception = assertThrows(FkProductsException.class, () -> productService.getProduct(invalidId));
+
+        assertThat(exception.getMessage()).isEqualTo("product notFound");
+    }
+
+    private ProductEntity generateProduct() {
+        return new ProductEntity(1L, "바나나", 5000L, 3000L, "당도 높은 바나나예요", LocalDateTime.now());
     }
 }
