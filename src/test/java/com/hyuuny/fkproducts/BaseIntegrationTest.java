@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hyuuny.fkproducts.auth.controller.AuthRequestDto;
 import com.hyuuny.fkproducts.auth.controller.AuthResponseDto;
 import com.hyuuny.fkproducts.support.response.ApiResponse;
+import com.hyuuny.fkproducts.users.doamin.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.Objects;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -42,6 +45,9 @@ public abstract class BaseIntegrationTest {
     @Autowired
     protected PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserRepository userRepository;
+
     protected String getBearerToken(final String email, final String password) throws Exception {
         String accessToken = getAccessToken(email, password);
         return "Bearer " + accessToken;
@@ -53,8 +59,16 @@ public abstract class BaseIntegrationTest {
                 .content(this.objectMapper.writeValueAsString(new AuthRequestDto.LoginRequest(email, password))));
 
         String responseBody = perform.andReturn().getResponse().getContentAsString();
-        ApiResponse<AuthResponseDto.UserWithTokenResponse> response = objectMapper.readValue(responseBody, new TypeReference<>() {});
+        ApiResponse<AuthResponseDto.UserWithTokenResponse> response = objectMapper.readValue(responseBody, new TypeReference<>() {
+        });
         return response.getData().getAccessToken();
+    }
+
+    protected void deleteAllUser() {
+        userRepository.findAll().stream()
+                .filter(user -> !Objects.equals(user.getEmail(), ADMIN_EMAIL))
+                .filter(user -> !Objects.equals(user.getEmail(), CUSTOMER_EMAIL))
+                .forEach(userRepository::delete);
     }
 
 }

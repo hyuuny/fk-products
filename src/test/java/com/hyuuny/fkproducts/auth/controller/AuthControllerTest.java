@@ -25,7 +25,7 @@ class AuthControllerTest extends BaseIntegrationTest {
 
     @AfterEach
     public void tearDown() {
-        userRepository.deleteAll();
+        deleteAllUser();
     }
 
     @DisplayName("로그인에 성공하면 액세스 토큰이 발급된다")
