@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class ProductService {
 
     private final ProductWriter productWriter;
+    private final ProductReader productReader;
     private final ProductValidator validator;
 
     @Transactional
@@ -22,5 +23,10 @@ public class ProductService {
         validator.validate(product);
         ProductEntity savedProduct = productWriter.save(product);
         return new ProductDto.Response(savedProduct);
+    }
+
+    public ProductDto.Response getProduct(Long id) {
+        ProductEntity product = productReader.read(id);
+        return new ProductDto.Response(product);
     }
 }
