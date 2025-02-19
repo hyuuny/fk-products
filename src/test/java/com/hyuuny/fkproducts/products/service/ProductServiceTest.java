@@ -52,7 +52,7 @@ class ProductServiceTest {
     void createProductAndPriceException() {
         ProductDto.Create dto = new ProductDto.Create("바나나", 0L, 3000L, "당도 높은 바나나예요");
         doThrow(new FkProductsException(ErrorType.INVALID_PRODUCT_PRICE, "상품 가격은 0보다 커야 합니다."))
-                .when(productValidator).validate(any(ProductEntity.class));
+                .when(productValidator).validate(any());
 
         FkProductsException exception = assertThrows(FkProductsException.class, () -> productService.createProduct(dto));
 
@@ -85,6 +85,36 @@ class ProductServiceTest {
         FkProductsException exception = assertThrows(FkProductsException.class, () -> productService.getProduct(invalidId));
 
         assertThat(exception.getMessage()).isEqualTo("product notFound");
+    }
+
+    @DisplayName("상품을 수정할 수 있다")
+    @Test
+    void updateProduct() {
+        ProductEntity product = generateProduct();
+        ProductDto.Update dto = new ProductDto.Update("사과", 6000L, 3500L, "맛있는 사과예요");
+        doNothing().when(productValidator).validate(any());
+        when(productReader.read(any())).thenReturn(product);
+
+        ProductDto.Response response = productService.updateProduct(product.getId(), dto);
+
+        assertThat(response.getId()).isEqualTo(product.getId());
+        assertThat(response.getName()).isEqualTo(dto.getName());
+        assertThat(response.getPrice()).isEqualTo(dto.getPrice());
+        assertThat(response.getShippingFee()).isEqualTo(dto.getShippingFee());
+        assertThat(response.getDescription()).isEqualTo(dto.getDescription());
+    }
+
+    @DisplayName("상품 가격이 0원 이하이면 상품을 수정할 수 없다")
+    @Test
+    void updateProductAndPriceException() {
+        ProductEntity product = generateProduct();
+        ProductDto.Update dto = new ProductDto.Update("사과", 0L, 3500L, "맛있는 사과예요");
+        doThrow(new FkProductsException(ErrorType.INVALID_PRODUCT_PRICE, "상품 가격은 0보다 커야 합니다."))
+                .when(productValidator).validate(any());
+
+        FkProductsException exception = assertThrows(FkProductsException.class, () -> productService.updateProduct(product.getId(), dto));
+
+        assertThat(exception.getMessage()).isEqualTo("invalid productPrice");
     }
 
     private ProductEntity generateProduct() {
