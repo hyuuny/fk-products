@@ -1,6 +1,9 @@
 package com.hyuuny.fkproducts.support.error;
 
 
+import lombok.Getter;
+
+@Getter
 public class ErrorMessage {
 
     private final String code;
