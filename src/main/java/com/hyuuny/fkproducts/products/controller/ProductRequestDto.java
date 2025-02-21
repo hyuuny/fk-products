@@ -26,5 +26,13 @@ public class ProductRequestDto {
             return new ProductDto.Update(name, price, shippingFee, description);
         }
     }
+
+    public record ProductSearchConditionRequest(
+            String name
+    ) {
+        public ProductDto.ProductSearchCondition toSearchCondition() {
+            return new ProductDto.ProductSearchCondition(this.name);
+        }
+    }
 }
 

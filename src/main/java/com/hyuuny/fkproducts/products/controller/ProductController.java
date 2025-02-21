@@ -5,7 +5,12 @@ import com.hyuuny.fkproducts.products.service.ProductService;
 import com.hyuuny.fkproducts.support.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
@@ -20,6 +25,16 @@ public class ProductController {
     ) {
         ProductDto.Response savedProduct = productService.createProduct(request.toCreate());
         return ApiResponse.success(new ProductResponseDto.ResponseDto(savedProduct));
+    }
+
+    @GetMapping
+    public ApiResponse<Page<ProductResponseDto.ResponsesDto>> getProducts(
+            ProductRequestDto.ProductSearchConditionRequest request,
+            @PageableDefault(sort = "id", direction = DESC) Pageable pageable
+    ) {
+        Page<ProductResponseDto.ResponsesDto> page = productService.getProducts(request.toSearchCondition(), pageable)
+                .map(ProductResponseDto.ResponsesDto::new);
+        return ApiResponse.success(page);
     }
 
     @GetMapping("/{id}")

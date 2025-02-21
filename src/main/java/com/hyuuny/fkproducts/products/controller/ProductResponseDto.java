@@ -26,4 +26,20 @@ public class ProductResponseDto {
         }
     }
 
+    public record ResponsesDto(
+            Long id,
+            String name,
+            Long price,
+            LocalDateTime createdAt
+    ) {
+        public ResponsesDto(ProductDto.Responses responses) {
+            this(
+                    responses.id(),
+                    responses.name(),
+                    responses.price(),
+                    responses.createdAt()
+            );
+        }
+    }
+
 }
