@@ -23,6 +23,22 @@ public class ProductDto {
         }
     }
 
+    public record Responses(
+            Long id,
+            String name,
+            Long price,
+            LocalDateTime createdAt
+    ) {
+        public Responses(ProductEntity entity) {
+            this(
+                    entity.getId(),
+                    entity.getName(),
+                    entity.getPrice(),
+                    entity.getCreatedAt()
+            );
+        }
+    }
+
     public record Response(
             Long id,
             String name,
@@ -55,5 +71,10 @@ public class ProductDto {
             entity.changeShippingFee(this.shippingFee);
             entity.changeDescription(this.description);
         }
+    }
+
+    public record ProductSearchCondition(
+            String name
+    ) {
     }
 }
