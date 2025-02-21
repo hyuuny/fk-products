@@ -6,6 +6,13 @@ import com.hyuuny.fkproducts.support.error.FkProductsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -140,6 +147,31 @@ class ProductServiceTest {
         FkProductsException exception = assertThrows(FkProductsException.class, () -> productService.deleteProduct(invalidId));
 
         assertThat(exception.getMessage()).isEqualTo("product notFound");
+    }
+
+    @DisplayName("상품 목록을 조회 및 검색할 수 있다")
+    @Test
+    void getProducts() {
+        ProductDto.ProductSearchCondition searchCondition = new ProductDto.ProductSearchCondition(null);
+        List<ProductEntity> products = Arrays.asList(
+                new ProductEntity(1L, "사과", 2000L, 3000L, "맛있는 사과예요", LocalDateTime.now()),
+                new ProductEntity(2L, "포도", 3000L, 3000L, "맛있는 포도예요", LocalDateTime.now()),
+                new ProductEntity(3L, "수박", 4000L, 3000L, "맛있는 수박이예요", LocalDateTime.now()),
+                new ProductEntity(4L, "딸기", 5000L, 3000L, "맛있는 딸기예요", LocalDateTime.now()),
+                new ProductEntity(5L, "바나나", 3000L, 3000L, "맛있는 바나나예요", LocalDateTime.now()),
+                new ProductEntity(6L, "참외", 4000L, 3000L, "맛있는 참외예요", LocalDateTime.now()),
+                new ProductEntity(7L, "아메리카노", 1500L, 3000L, "맛있는 아메리카노예요", LocalDateTime.now()),
+                new ProductEntity(8L, "카페라떼", 2000L, 3000L, "맛있는 카페라떼예요", LocalDateTime.now()),
+                new ProductEntity(9L, "핫초코", 2000L, 3000L, "맛있는 핫초코예요", LocalDateTime.now()),
+                new ProductEntity(10L, "카푸치노", 25000L, 3000L, "맛있는 카푸치노예요", LocalDateTime.now())
+        );
+        PageRequest pageable = PageRequest.of(0, 10);
+        Page<ProductEntity> page = new PageImpl<>(products, pageable, products.size());
+        when(productReader.search(any(), any())).thenReturn(page);
+
+        Page<ProductDto.Responses> search = productService.getProducts(searchCondition, pageable);
+
+        assertThat(search.getTotalElements()).isEqualTo(10);
     }
 
     private ProductEntity generateProduct() {
