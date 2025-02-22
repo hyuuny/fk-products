@@ -4,6 +4,7 @@ import com.hyuuny.fkproducts.BaseIntegrationTest;
 import com.hyuuny.fkproducts.productoptions.domain.ProductOptionEntity;
 import com.hyuuny.fkproducts.productoptions.domain.ProductOptionRepository;
 import com.hyuuny.fkproducts.productoptions.domain.ProductOptionType;
+import com.hyuuny.fkproducts.productoptions.service.ProductOptionDto;
 import com.hyuuny.fkproducts.productoptions.service.ProductOptionService;
 import com.hyuuny.fkproducts.products.domain.ProductEntity;
 import com.hyuuny.fkproducts.products.domain.ProductRepository;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -218,4 +220,54 @@ class ProductOptionControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("error.message").value(ErrorType.INVALID_INPUT_OPTION_ITEM.getMessage()))
                 .andExpect(jsonPath("error.data").value("입력 타입 값에는 아이템을 등록할 수 없습니다."));
     }
+
+    @DisplayName("상품 옵션을 상세조회 할 수 있다")
+    @Test
+    void getProductOption() throws Exception {
+        ProductOptionDto.Create dto = new ProductOptionDto.Create(
+                productEntity.getId(),
+                "사이즈",
+                ProductOptionType.SELECTED,
+                1000L,
+                List.of(
+                        new ProductOptionDto.ItemCreate("230"),
+                        new ProductOptionDto.ItemCreate("235"),
+                        new ProductOptionDto.ItemCreate("240"),
+                        new ProductOptionDto.ItemCreate("245")
+                )
+        );
+        ProductOptionDto.Response productOption = productOptionService.addOption(dto);
+
+        mockMvc.perform(get("/api/v1/product-options/{id}", productOption.id())
+                        .header(HttpHeaders.AUTHORIZATION, this.getBearerToken(CUSTOMER_EMAIL, CUSTOMER_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(jsonPath("result").value(ResultType.SUCCESS.name()))
+                .andExpect(jsonPath("data.id").exists())
+                .andExpect(jsonPath("data.name").value(dto.name()))
+                .andExpect(jsonPath("data.productId").value(dto.productId()))
+                .andExpect(jsonPath("data.name").value(dto.name()))
+                .andExpect(jsonPath("data.optionType").value(dto.optionType().name()))
+                .andExpect(jsonPath("data.additionalPrice").value(dto.additionalPrice()))
+                .andExpect(jsonPath("data.items[0].name").value(dto.items().get(0).name()))
+                .andExpect(jsonPath("data.items[1].name").value(dto.items().get(1).name()))
+                .andExpect(jsonPath("data.items[2].name").value(dto.items().get(2).name()))
+                .andExpect(jsonPath("data.items[3].name").value(dto.items().get(3).name()));
+    }
+
+    @DisplayName("존재하지 않는 상품 옵션을 상세조회 할 수 있다")
+    @Test
+    void getProductOptionAndNotFoundException() throws Exception {
+        long invalidId = 999999999L;
+
+        mockMvc.perform(get("/api/v1/product-options/{id}", invalidId)
+                        .header(HttpHeaders.AUTHORIZATION, this.getBearerToken(CUSTOMER_EMAIL, CUSTOMER_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.message").value(ErrorType.PRODUCT_OPTION_NOTFOUND.getMessage()))
+                .andExpect(jsonPath("error.data").value("상품 옵션을 찾을 수 없습니다 id:" + invalidId));
+    }
+
 }
