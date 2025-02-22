@@ -214,4 +214,47 @@ class ProductOptionServiceTest {
         assertThat(exception.getMessage()).isEqualTo("productOption notFound");
     }
 
+    @DisplayName("상품 옵션을 수정 할 수 있다")
+    @Test
+    void updateProductOption() {
+        ProductOptionEntity productOption = ProductOptionEntity.builder()
+                .id(1L)
+                .productId(1L)
+                .name("사이즈")
+                .optionType(ProductOptionType.SELECTED)
+                .additionalPrice(1000L)
+                .build();
+        List<OptionItemEntity> items = List.of(
+                OptionItemEntity.builder().id(1L).name("230").productOption(productOption).build(),
+                OptionItemEntity.builder().id(2L).name("235").productOption(productOption).build(),
+                OptionItemEntity.builder().id(3L).name("240").productOption(productOption).build(),
+                OptionItemEntity.builder().id(4L).name("245").productOption(productOption).build()
+        );
+        items.forEach(productOption::addItem);
+        ProductOptionDto.Update dto = new ProductOptionDto.Update(1L, "추가옵션", ProductOptionType.INPUT, 1500L, Collections.emptyList());
+        when(productOptionReader.read(any())).thenReturn(productOption);
+        doNothing().when(productOptionValidator).validate(any());
+
+        ProductOptionDto.Response response = productOptionService.updateProductOption(productOption.getId(), dto);
+
+        assertThat(response.id()).isEqualTo(productOption.getId());
+        assertThat(response.name()).isEqualTo(dto.name());
+        assertThat(response.optionType()).isEqualTo(dto.optionType());
+        assertThat(response.additionalPrice()).isEqualTo(dto.additionalPrice());
+        assertThat(response.items().size()).isEqualTo(dto.items().size());
+    }
+
+    @DisplayName("존재하지 않는 상품 옵션을 수정 할 수 있다")
+    @Test
+    void updateProductOptionAndNotFoundException() {
+        Long invalidId = 99999999L;
+        ProductOptionDto.Update dto = new ProductOptionDto.Update(1L, "추가옵션", ProductOptionType.INPUT, 1500L, Collections.emptyList());
+        doThrow(new FkProductsException(ErrorType.PRODUCT_OPTION_NOTFOUND, "상품 옵션을 찾을 수 없습니다 id:" + invalidId))
+                .when(productOptionReader).read(any());
+
+        FkProductsException exception = assertThrows(FkProductsException.class, () -> productOptionService.updateProductOption(invalidId, dto));
+
+        assertThat(exception.getMessage()).isEqualTo("productOption notFound");
+    }
+
 }
