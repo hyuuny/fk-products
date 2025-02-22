@@ -22,8 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -270,4 +269,55 @@ class ProductOptionControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("error.data").value("상품 옵션을 찾을 수 없습니다 id:" + invalidId));
     }
 
+    @DisplayName("상품 옵션을 수정 할 수 있다")
+    @Test
+    void updateProductOption() throws Exception {
+        ProductOptionDto.Create dto = new ProductOptionDto.Create(
+                productEntity.getId(),
+                "사이즈",
+                ProductOptionType.SELECTED,
+                1000L,
+                List.of(
+                        new ProductOptionDto.ItemCreate("230"),
+                        new ProductOptionDto.ItemCreate("235"),
+                        new ProductOptionDto.ItemCreate("240"),
+                        new ProductOptionDto.ItemCreate("245")
+                )
+        );
+        ProductOptionDto.Response productOption = productOptionService.addOption(dto);
+        ProductOptionRequestDto.UpdateRequest request = new ProductOptionRequestDto.UpdateRequest(dto.productId(), "추가옵션", ProductOptionType.INPUT, 1500L, Collections.emptyList());
+
+        mockMvc.perform(put("/api/v1/product-options/{id}", productOption.id())
+                        .header(HttpHeaders.AUTHORIZATION, this.getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("result").value(ResultType.SUCCESS.name()))
+                .andExpect(jsonPath("data.id").exists())
+                .andExpect(jsonPath("data.name").value(request.name()))
+                .andExpect(jsonPath("data.productId").value(request.productId()))
+                .andExpect(jsonPath("data.name").value(request.name()))
+                .andExpect(jsonPath("data.optionType").value(request.optionType().name()))
+                .andExpect(jsonPath("data.additionalPrice").value(request.additionalPrice()))
+                .andExpect(jsonPath("data.items.size()").value(request.items().size()));
+    }
+
+    @DisplayName("존재하지 않는 상품 옵션을 수정 할 수 있다")
+    @Test
+    void updateProductOptionAndNotFoundException() throws Exception {
+        Long invalidId = 99999999L;
+        ProductOptionRequestDto.UpdateRequest request = new ProductOptionRequestDto.UpdateRequest(productEntity.getId(), "추가옵션", ProductOptionType.INPUT, 1500L, Collections.emptyList());
+
+        mockMvc.perform(put("/api/v1/product-options/{id}", invalidId)
+                        .header(HttpHeaders.AUTHORIZATION, this.getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.message").value(ErrorType.PRODUCT_OPTION_NOTFOUND.getMessage()))
+                .andExpect(jsonPath("error.data").value("상품 옵션을 찾을 수 없습니다 id:" + invalidId));
+    }
 }
