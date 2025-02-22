@@ -320,4 +320,42 @@ class ProductOptionControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("error.message").value(ErrorType.PRODUCT_OPTION_NOTFOUND.getMessage()))
                 .andExpect(jsonPath("error.data").value("상품 옵션을 찾을 수 없습니다 id:" + invalidId));
     }
+
+    @DisplayName("상품 옵션을 삭제 할 수 있다")
+    @Test
+    void deleteProductOption() throws Exception {
+        ProductOptionDto.Create dto = new ProductOptionDto.Create(
+                productEntity.getId(),
+                "사이즈",
+                ProductOptionType.SELECTED,
+                1000L,
+                List.of(
+                        new ProductOptionDto.ItemCreate("230"),
+                        new ProductOptionDto.ItemCreate("235"),
+                        new ProductOptionDto.ItemCreate("240"),
+                        new ProductOptionDto.ItemCreate("245")
+                )
+        );
+        ProductOptionDto.Response productOption = productOptionService.addOption(dto);
+
+        mockMvc.perform(delete("/api/v1/product-options/{id}", productOption.id())
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("result").value(ResultType.SUCCESS.name()));
+    }
+
+    @DisplayName("존재하지 않는 상품 옵션을 삭제 할 수 있다")
+    @Test
+    void deleteProductOptionAndNotFoundException() throws Exception {
+        Long invalidId = 99999999L;
+
+        mockMvc.perform(delete("/api/v1/product-options/{id}", invalidId)
+                        .header(HttpHeaders.AUTHORIZATION, getBearerToken(ADMIN_EMAIL, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.message").value(ErrorType.PRODUCT_OPTION_NOTFOUND.getMessage()))
+                .andExpect(jsonPath("error.data").value("상품 옵션을 찾을 수 없습니다 id:" + invalidId));
+    }
 }
