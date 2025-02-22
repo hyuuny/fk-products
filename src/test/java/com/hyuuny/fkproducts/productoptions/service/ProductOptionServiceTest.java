@@ -257,4 +257,42 @@ class ProductOptionServiceTest {
         assertThat(exception.getMessage()).isEqualTo("productOption notFound");
     }
 
+    @DisplayName("상품 옵션을 삭제 할 수 있다")
+    @Test
+    void deleteProductOption() {
+        ProductOptionEntity productOption = ProductOptionEntity.builder()
+                .id(1L)
+                .productId(1L)
+                .name("사이즈")
+                .optionType(ProductOptionType.SELECTED)
+                .additionalPrice(1000L)
+                .build();
+        List<OptionItemEntity> items = List.of(
+                OptionItemEntity.builder().id(1L).name("230").productOption(productOption).build(),
+                OptionItemEntity.builder().id(2L).name("235").productOption(productOption).build(),
+                OptionItemEntity.builder().id(3L).name("240").productOption(productOption).build(),
+                OptionItemEntity.builder().id(4L).name("245").productOption(productOption).build()
+        );
+        items.forEach(productOption::addItem);
+        when(productOptionReader.read(any())).thenReturn(productOption);
+        doNothing().when(productOptionWriter).delete(any());
+
+        productOptionService.deleteProductOption(productOption.getId());
+
+        verify(productOptionReader).read(productOption.getId());
+        verify(productOptionWriter).delete(productOption);
+    }
+
+    @DisplayName("존재하지 않는 상품 옵션을 삭제 할 수 있다")
+    @Test
+    void deleteProductOptionAndNotFoundException() {
+        Long invalidId = 99999999L;
+        doThrow(new FkProductsException(ErrorType.PRODUCT_OPTION_NOTFOUND, "상품 옵션을 찾을 수 없습니다 id:" + invalidId))
+                .when(productOptionReader).read(any());
+
+        FkProductsException exception = assertThrows(FkProductsException.class, () -> productOptionService.deleteProductOption(invalidId));
+
+        assertThat(exception.getMessage()).isEqualTo("productOption notFound");
+    }
+
 }
