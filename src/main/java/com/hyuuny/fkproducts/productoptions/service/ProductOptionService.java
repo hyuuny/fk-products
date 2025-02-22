@@ -39,4 +39,9 @@ public class ProductOptionService {
         }
     }
 
+    public ProductOptionDto.Response getProductOption(Long id) {
+        ProductOptionEntity productOption = productOptionReader.read(id);
+        return new ProductOptionDto.Response(productOption);
+    }
+
 }
