@@ -26,4 +26,8 @@ public class ProductReader {
         return productRepository.search(searchCondition, pageable);
     }
 
+    public boolean existsProduct(Long id) {
+        return productRepository.existsById(id);
+    }
+
 }
