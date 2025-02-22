@@ -5,10 +5,7 @@ import com.hyuuny.fkproducts.productoptions.service.ProductOptionService;
 import com.hyuuny.fkproducts.support.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/product-options")
@@ -23,6 +20,14 @@ public class ProductOptionController {
     ) {
         ProductOptionDto.Response savedOption = productOptionService.addOption(request.toCreate());
         return ApiResponse.success(new ProductOptionResponseDto.ResponseDto(savedOption));
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<ProductOptionResponseDto.ResponseDto> getProductOption(
+            @PathVariable Long id
+    ) {
+        ProductOptionDto.Response productOption = productOptionService.getProductOption(id);
+        return ApiResponse.success(new ProductOptionResponseDto.ResponseDto(productOption));
     }
 
 }
