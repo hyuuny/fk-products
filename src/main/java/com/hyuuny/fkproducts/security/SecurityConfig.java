@@ -56,7 +56,8 @@ public class SecurityConfig {
                                         "/api/v1/product-options/**"
                                 ).hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE,
-                                        "/api/v1/products/**"
+                                        "/api/v1/products/**",
+                                        "/api/v1/product-options/**"
                                 ).hasAuthority("ADMIN")
                                 .requestMatchers(webSecurityIgnoring).permitAll()
                                 .anyRequest().authenticated()

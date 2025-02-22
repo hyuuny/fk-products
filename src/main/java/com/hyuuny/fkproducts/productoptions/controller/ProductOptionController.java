@@ -39,4 +39,12 @@ public class ProductOptionController {
         return ApiResponse.success(new ProductOptionResponseDto.ResponseDto(updatedProductOption));
     }
 
+    @DeleteMapping("/{id}")
+    public ApiResponse<?> deleteProductOption(
+            @PathVariable Long id
+    ) {
+        productOptionService.deleteProductOption(id);
+        return ApiResponse.success();
+    }
+
 }
