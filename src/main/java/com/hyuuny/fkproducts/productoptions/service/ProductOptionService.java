@@ -44,4 +44,12 @@ public class ProductOptionService {
         return new ProductOptionDto.Response(productOption);
     }
 
+    @Transactional
+    public ProductOptionDto.Response updateProductOption(Long id, ProductOptionDto.Update dto) {
+        ProductOptionEntity productOption = productOptionReader.read(id);
+        validator.validate(productOption);
+        dto.update(productOption);
+        return new ProductOptionDto.Response(productOption);
+    }
+
 }

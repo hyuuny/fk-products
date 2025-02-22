@@ -37,4 +37,16 @@ public class ProductOptionEntity {
         optionItem.setProductOption(this);
     }
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changeOptionType(ProductOptionType optionType) {
+        this.optionType = optionType;
+    }
+
+    public void changeAdditionalPrice(Long additionalPrice) {
+        this.additionalPrice = additionalPrice;
+    }
+
 }

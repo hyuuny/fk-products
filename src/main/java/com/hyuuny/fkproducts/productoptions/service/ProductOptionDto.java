@@ -76,4 +76,23 @@ public class ProductOptionDto {
         }
     }
 
+    public record Update(
+            Long productId,
+            String name,
+            ProductOptionType optionType,
+            Long additionalPrice,
+            List<ItemCreate> items
+    ) {
+        public void update(ProductOptionEntity entity) {
+            entity.changeName(this.name);
+            entity.changeOptionType(this.optionType);
+            entity.changeAdditionalPrice(this.additionalPrice);
+
+            entity.getItems().clear();
+            items.stream()
+                    .map(ItemCreate::toEntity)
+                    .forEach(entity::addItem);
+        }
+    }
+
 }
