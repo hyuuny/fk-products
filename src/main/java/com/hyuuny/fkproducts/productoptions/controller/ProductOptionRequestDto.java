@@ -36,5 +36,25 @@ public class ProductOptionRequestDto {
         }
     }
 
+    public record UpdateRequest(
+            @NotNull Long productId,
+            @NotNull String name,
+            @NotNull ProductOptionType optionType,
+            @NotNull Long additionalPrice,
+            List<ItemCreateRequest> items
+    ) {
+        public ProductOptionDto.Update toUpdate() {
+            return new ProductOptionDto.Update(
+                    productId,
+                    name,
+                    optionType,
+                    additionalPrice,
+                    items.stream()
+                            .map(ItemCreateRequest::toItemCreate)
+                            .toList()
+            );
+        }
+    }
+
 }
 

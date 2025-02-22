@@ -30,4 +30,13 @@ public class ProductOptionController {
         return ApiResponse.success(new ProductOptionResponseDto.ResponseDto(productOption));
     }
 
+    @PutMapping("/{id}")
+    public ApiResponse<ProductOptionResponseDto.ResponseDto> updateProductOption(
+            @PathVariable Long id,
+            @RequestBody @Valid ProductOptionRequestDto.UpdateRequest request
+    ) {
+        ProductOptionDto.Response updatedProductOption = productOptionService.updateProductOption(id, request.toUpdate());
+        return ApiResponse.success(new ProductOptionResponseDto.ResponseDto(updatedProductOption));
+    }
+
 }
