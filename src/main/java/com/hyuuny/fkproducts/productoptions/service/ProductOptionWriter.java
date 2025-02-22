@@ -15,4 +15,8 @@ public class ProductOptionWriter {
         return productOptionRepository.save(entity);
     }
 
+    public void delete(ProductOptionEntity entity) {
+        productOptionRepository.deleteById(entity.getId());
+    }
+
 }

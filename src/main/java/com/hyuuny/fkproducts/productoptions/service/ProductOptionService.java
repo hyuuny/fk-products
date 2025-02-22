@@ -52,4 +52,10 @@ public class ProductOptionService {
         return new ProductOptionDto.Response(productOption);
     }
 
+    @Transactional
+    public void deleteProductOption(Long id) {
+        ProductOptionEntity productOption = productOptionReader.read(id);
+        productOptionWriter.delete(productOption);
+    }
+
 }
